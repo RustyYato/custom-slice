@@ -1,0 +1,14 @@
+[package]
+name = "custom-slice"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+
+# default = ["std"]
+
+std = ["alloc"]
+alloc = []
+
+[dependencies]
+erasable = "1"
