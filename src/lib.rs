@@ -58,11 +58,9 @@ impl<T, Header> HeaderSliceInitError<T, Header> {
     }
 }
 
-unsafe impl<T, Header> erasable::Erasable for HeaderSlice<T, Header> {
-    const ACK_1_1_0: bool = false;
-
+unsafe impl<T, Header> thin_ptr::Erasable for HeaderSlice<T, Header> {
     #[inline]
-    unsafe fn unerase(this: erasable::ErasedPtr) -> core::ptr::NonNull<Self> {
+    unsafe fn unerase(this: NonNull<()>) -> NonNull<Self> {
         let ptr = this.as_ptr();
         let len = unsafe { *ptr.cast::<usize>() };
         NonNull::new_unchecked(
@@ -71,11 +69,9 @@ unsafe impl<T, Header> erasable::Erasable for HeaderSlice<T, Header> {
     }
 }
 
-unsafe impl<Header> erasable::Erasable for HeaderStr<Header> {
-    const ACK_1_1_0: bool = false;
-
+unsafe impl<Header> thin_ptr::Erasable for HeaderStr<Header> {
     #[inline]
-    unsafe fn unerase(this: erasable::ErasedPtr) -> core::ptr::NonNull<Self> {
+    unsafe fn unerase(this: NonNull<()>) -> core::ptr::NonNull<Self> {
         let ptr = this.as_ptr();
         let len = unsafe { *ptr.cast::<usize>() };
         NonNull::new_unchecked(

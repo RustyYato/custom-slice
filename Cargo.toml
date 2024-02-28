@@ -11,4 +11,4 @@ std = ["alloc"]
 alloc = []
 
 [dependencies]
-erasable = "1"
+thin-ptr = { git = "https://github.com/RustyYato/thin-ptr.git", branch = "main" }
