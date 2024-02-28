@@ -370,3 +370,69 @@ impl<T> Drop for SliceWriter<T> {
         unsafe { core::ptr::slice_from_raw_parts_mut(self.start, self.len).drop_in_place() }
     }
 }
+
+impl<Header: PartialEq, T: PartialEq> PartialEq for HeaderSlice<T, Header> {
+    fn eq(&self, other: &Self) -> bool {
+        self.header == other.header && self.slice == other.slice
+    }
+}
+
+impl<Header: Eq, T: Eq> Eq for HeaderSlice<T, Header> {}
+
+impl<Header: PartialOrd, T: PartialOrd> PartialOrd for HeaderSlice<T, Header> {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        match self.header.partial_cmp(&other.header)? {
+            o @ (core::cmp::Ordering::Less | core::cmp::Ordering::Greater) => Some(o),
+            core::cmp::Ordering::Equal => self.slice.partial_cmp(&other.slice),
+        }
+    }
+}
+
+impl<Header: Ord, T: Ord> Ord for HeaderSlice<T, Header> {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        match self.header.cmp(&other.header) {
+            o @ (core::cmp::Ordering::Less | core::cmp::Ordering::Greater) => o,
+            core::cmp::Ordering::Equal => self.slice.cmp(&other.slice),
+        }
+    }
+}
+
+impl<T: core::hash::Hash, Header: core::hash::Hash> core::hash::Hash for HeaderSlice<T, Header> {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.header.hash(state);
+        self.slice.hash(state);
+    }
+}
+
+impl<Header: PartialEq> PartialEq for HeaderStr<Header> {
+    fn eq(&self, other: &Self) -> bool {
+        self.header == other.header && self.str == other.str
+    }
+}
+
+impl<Header: Eq> Eq for HeaderStr<Header> {}
+
+impl<Header: PartialOrd> PartialOrd for HeaderStr<Header> {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        match self.header.partial_cmp(&other.header)? {
+            o @ (core::cmp::Ordering::Less | core::cmp::Ordering::Greater) => Some(o),
+            core::cmp::Ordering::Equal => self.str.partial_cmp(&other.str),
+        }
+    }
+}
+
+impl<Header: Ord> Ord for HeaderStr<Header> {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        match self.header.cmp(&other.header) {
+            o @ (core::cmp::Ordering::Less | core::cmp::Ordering::Greater) => o,
+            core::cmp::Ordering::Equal => self.str.cmp(&other.str),
+        }
+    }
+}
+
+impl<Header: core::hash::Hash> core::hash::Hash for HeaderStr<Header> {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.header.hash(state);
+        self.str.hash(state);
+    }
+}
